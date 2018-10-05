@@ -30,5 +30,7 @@ public class MainActivity extends AppCompatActivity {
                 R.layout.student_item,
                 students
         );
+
+        lista.setAdapter(adapter);
     }
 }
