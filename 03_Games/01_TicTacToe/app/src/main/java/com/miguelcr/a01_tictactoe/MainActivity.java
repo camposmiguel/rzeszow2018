@@ -32,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
         // define the new screen to open
         Intent i = new Intent(MainActivity.this, GameActivity.class);
 
+        // putExtras
+        i.putExtra()
+
         // navigate to GameActivity
         startActivity(i);
 

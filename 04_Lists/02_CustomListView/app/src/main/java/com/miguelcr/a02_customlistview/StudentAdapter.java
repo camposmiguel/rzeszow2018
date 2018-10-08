@@ -45,7 +45,7 @@ class StudentAdapter extends ArrayAdapter<StudentItem> {
 
         // 3. Set the current info >>> into view components
         tvName.setText(name);
-        tvAge.setText(age);
+        tvAge.setText(String.valueOf(age));
 
         Picasso.get().load(photo).into(ivPhoto);
 
