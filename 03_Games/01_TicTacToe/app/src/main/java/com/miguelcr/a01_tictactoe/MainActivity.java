@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
         Intent i = new Intent(MainActivity.this, GameActivity.class);
 
         // putExtras
-        i.putExtra()
 
         // navigate to GameActivity
         startActivity(i);
