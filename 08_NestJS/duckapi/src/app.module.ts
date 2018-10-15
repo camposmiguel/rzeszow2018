@@ -16,7 +16,7 @@ import { UserController } from './user/user.controller';
       port: 3306,
       username: 'root',
       password: '',
-      database: 'c3duckapi',
+      database: 'duck_hunt_api',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
       charset: 'UTF8_GENERAL_CI'
