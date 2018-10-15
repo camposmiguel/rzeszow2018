@@ -12,6 +12,7 @@
 bin/
 gen/
 out/
+08_NestJS/duckapi/node_modules/
 
 # Gradle files
 .gradle/
