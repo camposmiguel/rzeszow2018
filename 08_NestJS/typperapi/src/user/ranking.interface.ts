@@ -1,5 +1,5 @@
 
 export interface Ranking {
-    readonly ducks: number;
+    readonly points: number;
     readonly username: string;
 }

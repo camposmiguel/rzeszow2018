@@ -44,9 +44,9 @@ export class UserController {
         });
     }
 
-    @Post('/rank')
-    updateRank(@Req() request, @Res() res, @Body('ducks') ducks) {
-        this.usersService.updateRank(request.payload.user.id, ducks).then(result => {
+    @Post('/increase')
+    increasePoints(@Req() request, @Res() res, @Body('points') points) {
+        this.usersService.updatePoints(request.payload.user.id, points).then(result => {
           res.status(HttpStatus.ACCEPTED).json(result);
         });
     }

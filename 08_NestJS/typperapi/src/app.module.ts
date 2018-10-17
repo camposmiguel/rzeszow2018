@@ -10,6 +10,12 @@ import { UserController } from './user/user.controller';
 import { ExerciseController } from './exercise/exercise.controller';
 import { ExerciseService } from './exercise/exercise.service';
 import { ExerciseModule } from './exercise/exercise.module';
+import { LevelController } from './level/level.controller';
+import { LevelService } from './level/level.service';
+import { LevelModule } from './level/level.module';
+import { BattleController } from './battle/battle.controller';
+import { BattleService } from './battle/battle.service';
+import { BattleModule } from './battle/battle.module';
 
 @Module({
   imports: [
@@ -27,8 +33,10 @@ import { ExerciseModule } from './exercise/exercise.module';
     UsersModule,
     AuthModule,
     ExerciseModule,
+    LevelModule,
+    BattleModule,
   ],
-  controllers: [AppController, UserController, ExerciseController],
-  providers: [AppService, UserService, AuthService, ExerciseService],
+  controllers: [AppController, UserController, ExerciseController, LevelController, BattleController],
+  providers: [AppService, UserService, AuthService, ExerciseService, LevelService, BattleService],
 })
 export class AppModule {}

@@ -24,11 +24,11 @@ export class UserService {
       async getRanking(): Promise<Ranking[]> {
         const users = await this.userRepository
         .createQueryBuilder('user')
-        .orderBy('user.ducks', 'DESC').getMany();
+        .orderBy('user.points', 'DESC').getMany();
 
         const ranking: Ranking[] = new Array();
         users.forEach(u => {
-          ranking.push({ducks: u.ducks, username: u.username});
+          ranking.push({points: u.points, username: u.username});
         });
 
         return ranking;
@@ -63,22 +63,22 @@ export class UserService {
        * Update User
        *******************************************************/
 
-      async updateUser(id: string, us: string, em: string, pwd: string, nducks: number): Promise<User> {
+      async updateUser(id: string, us: string, em: string, pwd: string, points: number): Promise<User> {
         const userToUpdate = await this.userRepository.findOne(id);
         userToUpdate.username = us;
         userToUpdate.email = em;
         userToUpdate.password = pwd;
-        userToUpdate.ducks = nducks;
+        userToUpdate.points = points;
         return await this.userRepository.save(userToUpdate);
       }
 
       /*******************************************************
-       * Update Rank
+       * Update Points
        *******************************************************/
 
-      async updateRank(id: string, nducks: number): Promise<User> {
+      async updatePoints(id: string, npoints: number): Promise<User> {
         const userToUpdate = await this.userRepository.findOne(id);
-        userToUpdate.ducks = nducks;
+        userToUpdate.points = npoints;
         return await this.userRepository.save(userToUpdate);
       }
 
