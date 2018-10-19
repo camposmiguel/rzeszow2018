@@ -12,13 +12,20 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.ClusterManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmResults;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerDragListener, GoogleMap.OnMapClickListener {
 
     private GoogleMap mMap;
+    Realm realm;
+    RealmResults<PlaceItem> placeItemRealmResults;
+    private ClusterManager<MyItem> mClusterManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +35,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        // get the realm default connection
+        realm = Realm.getDefaultInstance();
+
+        // get the places saved in the database
+        placeItemRealmResults = realm.where(PlaceItem.class).findAll();
     }
 
 
@@ -44,25 +57,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        mClusterManager = new ClusterManager<MyItem>(this, mMap);
+
+        // Point the map's listeners at the listeners implemented by the cluster
+        // manager.
+        mMap.setOnCameraIdleListener(mClusterManager);
+        mMap.setOnMarkerClickListener(mClusterManager);
+
+
         // Add a marker in Sydney and move the camera
 
         // Define a location
         LatLng schoolZst = new LatLng(50.015320,21.978180);
-        LatLng schoolSev = new LatLng(50.015320,21.978180);
 
-        List<LatLng> locationList = new ArrayList<>();
-        locationList.add(new LatLng(50.015320,21.978180));
-        locationList.add(new LatLng(60.015320,21.978180));
-        locationList.add(new LatLng(70.015320,21.978180));
+        for(int i=0; i<placeItemRealmResults.size(); i++) {
+            PlaceItem place = placeItemRealmResults.get(i);
+            LatLng placePosition = new LatLng(place.getLatitude(),place.getLongitude());
 
-        for(int i=0; i<locationList.size(); i++) {
             // Add a marker to the map
-            mMap.addMarker(new MarkerOptions()
-                    .position(locationList.get(i))
-                    .title("Marker in Rzeszów")
-            );
-        }
+            /*mMap.addMarker(new MarkerOptions()
+                    .position(placePosition)
+                    .title("Place")
+            );*/
+            MyItem offsetItem = new MyItem(place.getLatitude(), place.getLongitude());
+            mClusterManager.addItem(offsetItem);
 
+        }
 
 
         // Move the map center to the school location
@@ -89,13 +109,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onMapClick(LatLng latLng) {
+    public void onMapClick(final LatLng latLng) {
+        MyItem offsetItem = new MyItem(latLng.latitude, latLng.longitude);
+        mClusterManager.addItem(offsetItem);
+
         mMap.addMarker(new MarkerOptions()
                 .position(latLng)
-                .title("New Marker")
+                .title("Place")
         );
 
         mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                double lat = latLng.latitude;
+                double lon = latLng.longitude;
+
+                PlaceItem place = new PlaceItem();
+                place.setLatitude(lat);
+                place.setLongitude(lon);
+
+                // Save the place object in the DB
+                realm.copyToRealm(place);
+            }
+        });
     }
 }
